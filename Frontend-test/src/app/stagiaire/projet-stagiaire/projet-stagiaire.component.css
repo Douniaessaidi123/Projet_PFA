@@ -1,0 +1,23 @@
+.container { max-width: 1000px; margin: 16px auto; padding: 0 12px; }
+.projet-wrapper { display: grid; gap: 16px; }
+.projet-card { border-radius: 12px; }
+.state { padding: 12px 4px; color: #666; }
+.state.error { color: #b00020; }
+.state.empty { color: #777; }
+.file-row { margin-top: 8px; }
+
+/* src/app/projets-stagiaire/projets-stagiaire.component.css */
+.container { max-width: 1100px; margin: 16px auto; padding: 0 12px; }
+.state { padding: 12px; }
+.state.error { color: #c62828; }
+.state.empty { color: #777; }
+
+.projets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.projet-card { display: flex; flex-direction: column; }
+.file-row { margin-top: 8px; }

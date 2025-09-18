@@ -1,0 +1,56 @@
+<div class="container mt-4" style="max-width: 700px; margin: auto;">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Ajouter un Projet</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <form [formGroup]="projetForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+
+        <!-- Titre -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Titre</mat-label>
+          <input matInput formControlName="titre" required>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3" required></textarea>
+        </mat-form-field>
+
+        <!-- Date Début -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Date de début</mat-label>
+          <input matInput [matDatepicker]="pickerDebut" formControlName="dateDebut" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerDebut"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDebut></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Date Fin -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Date de fin</mat-label>
+          <input matInput [matDatepicker]="pickerFin" formControlName="dateFin" required>
+          <mat-datepicker-toggle matSuffix [for]="pickerFin"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFin></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fichier -->
+        <div class="full-width mb-3">
+          <label for="file">Fichier du projet :</label>
+          <input type="file" (change)="onFileSelected($event)" class="form-control" required>
+        </div>
+
+        <!-- Bouton Soumettre -->
+        <div class="text-end mt-4">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!projetForm.valid">
+            Ajouter
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

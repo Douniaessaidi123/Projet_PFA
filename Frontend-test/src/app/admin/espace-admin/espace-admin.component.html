@@ -1,0 +1,100 @@
+<!-- Toolbar en haut -->
+<mat-toolbar color="primary" class="main-toolbar">
+  <button mat-icon-button aria-label="Menu" (click)="sidenav.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="brand">
+    <mat-icon>school</mat-icon>
+    <span class="brand-text">StagiaFlow</span>
+  </span>
+
+  <span class="flex-spacer"></span>
+
+  <button mat-button *ngIf="authService.isAuthenticated">
+    {{ authService.username }}
+  </button>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Compte utilisateur">
+    <ng-container *ngIf="photoUrl(); else noPhoto">
+      <img [src]="photoUrl()" alt="Avatar" class="avatar-circle" (error)="onImgError($event)">
+    </ng-container>
+    <ng-template #noPhoto>
+      <div class="avatar-circle avatar-fallback">{{ initial }}</div>
+    </ng-template>
+  </button>
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item [routerLink]="['/admin/monCompte']">
+      <mat-icon>person</mat-icon> Mon compte
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon> Déconnexion
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<!-- Sidenav container -->
+<mat-sidenav-container class="main-container">
+  <!-- Sidebar gauche -->
+  <mat-sidenav #sidenav mode="side" opened class="side-drawer mat-elevation-z8">
+    <div class="sidebar-user-info">
+      <ng-container *ngIf="photoUrl(); else noPhotoSidebar">
+        <img [src]="photoUrl()" alt="Avatar" class="avatar mat-elevation-z8" (error)="onImgError($event)">
+      </ng-container>
+      <ng-template #noPhotoSidebar>
+        <div class="avatar-circle avatar-fallback mat-elevation-z8">{{ initial }}</div>
+      </ng-template>
+
+      <h4 class="name">{{ authService.username }}</h4>
+      <p class="designation">Administrateur</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-nav-list>
+      <mat-list-item>
+        <a class="menu-icons" routerLink="/admin/accueil" routerLinkActive="active-link">
+          <mat-icon>home</mat-icon> Accueil
+        </a>
+      </mat-list-item>
+      <mat-list-item>
+        <a class="menu-icons" routerLink="/admin/projets" routerLinkActive="active-link">
+          <mat-icon>folder</mat-icon> Tous les projets
+        </a>
+      </mat-list-item>
+      <mat-list-item>
+        <a class="menu-icons" routerLink="/admin/dashboard" routerLinkActive="active-link">
+          <mat-icon>dashboard</mat-icon> Tableau de bord
+        </a>
+      </mat-list-item>
+      <mat-list-item>
+        <a class="menu-icons" routerLink="/admin/settings" routerLinkActive="active-link">
+          <mat-icon>settings</mat-icon> Paramètres
+        </a>
+      </mat-list-item>
+      <mat-list-item>
+        <a class="menu-icons" routerLink="/admin/chat" routerLinkActive="active-link">
+          <mat-icon>chat</mat-icon> Discussion
+        </a>
+      </mat-list-item>
+    </mat-nav-list>
+
+    <div class="bottom-nav">
+      <mat-divider></mat-divider>
+      <mat-list-item>
+        <a class="menu-icons" (click)="logout()">
+          <mat-icon>logout</mat-icon> Déconnexion
+        </a>
+      </mat-list-item>
+    </div>
+  </mat-sidenav>
+
+  <!-- Contenu principal avec espace à gauche -->
+  <mat-sidenav-content>
+    <div class="main-content" style="padding-left: 20px; padding-top: 16px;">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+

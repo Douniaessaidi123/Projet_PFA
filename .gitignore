@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+**/node_modules/
+**/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# IDE - VS Code
+.vscode/
+
+# Logs and system files
+*.log
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+.angular/auth-service/src/main/resources/application.yml
+auth-service/src/main/resources/application.yml

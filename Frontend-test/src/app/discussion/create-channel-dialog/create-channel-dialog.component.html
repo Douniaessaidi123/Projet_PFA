@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Créer une équipe</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Choisir un projet</mat-label>
+    <mat-select [(value)]="selectedProjectId">
+      <mat-option *ngFor="let projet of data.projets" [value]="projet.id">
+        {{ projet.titre }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onCreate()" [disabled]="!selectedProjectId">Créer</button>
+</div>

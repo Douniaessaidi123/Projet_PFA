@@ -1,0 +1,169 @@
+<div class="auth-container">
+  <div class="container">
+    <!-- Panel gauche avec illustration -->
+    <div class="left-panel">
+      <div class="illustration">
+        <i class="fas fa-briefcase"></i>
+      </div>
+      <h1>Bienvenue sur StageFlow</h1>
+      <p>
+        Votre espace dédié à la gestion des stages.
+        Un environnement simple, moderne et collaboratif pour accompagner chaque étape de votre parcours académique et
+        professionnel.
+      </p>
+
+    </div>
+
+    <!-- Panel droit avec formulaires -->
+    <div class="right-panel">
+      <!-- Navigation tabs -->
+      <div class="nav-tabs">
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="mode === 'register'"
+          (click)="mode = 'register'"
+        >
+          Registre
+        </button>
+        <button
+          type="button"
+          class="nav-tab"
+          [class.active]="mode === 'login'"
+          (click)="mode = 'login'"
+        >
+          Connexion
+        </button>
+      </div>
+
+      <!-- Message d'erreur/succès -->
+      <div *ngIf="message" class="message" [ngClass]="messageType">
+        {{ message }}
+      </div>
+
+      <div class="form-container">
+        <!-- Formulaire d'inscription -->
+        <div *ngIf="mode === 'register'" class="form-section active">
+          <h2 class="form-title">Create Account</h2>
+          <p class="form-subtitle">Rejoignez StageFlo et profitez d’un espace dédié à la gestion et au suivi de vos
+            stages.</p>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+            <div class="input-group">
+              <input
+                type="text"
+                class="input-field"
+                placeholder="Nom*"
+                formControlName="nom"
+              >
+            </div>
+
+            <div class="input-group">
+              <input
+                type="text"
+                class="input-field"
+                placeholder="Prénom*"
+                formControlName="prenom"
+              >
+            </div>
+
+            <div class="input-group">
+              <input
+                type="email"
+                class="input-field"
+                placeholder="Email*"
+                formControlName="email"
+              >
+            </div>
+
+            <div class="input-group">
+              <input
+                type="password"
+                class="input-field"
+                placeholder="Mot de passe*"
+                formControlName="mot_de_passe"
+              >
+            </div>
+
+            <div class="input-group">
+              <select class="select-field" formControlName="departement">
+                <option value="">Sélectionner une departement*</option>
+                <option *ngFor="let departement of departements" [value]="departement.value">
+                  {{ departement.label }}
+                </option>
+              </select>
+            </div>
+
+
+            <div class="input-group">
+              <select class="select-field" formControlName="role">
+                <option value="">Sélectionner un rôle*</option>
+                <option *ngFor="let role of roles" [value]="role.value">
+                  {{ role.label }}
+                </option>
+              </select>
+            </div>
+            <button type="submit" class="submit-btn">
+              S'inscrire
+            </button>
+          </form>
+
+          <div class="switch-mode">
+            Vous avez déjà un compte?
+            <a href="#" (click)="mode = 'login'; $event.preventDefault()">Connectez-vous</a>
+          </div>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <div *ngIf="mode === 'login'" class="form-section active">
+          <h2 class="form-title">Login here</h2>
+          <p class="form-subtitle">Welcome back you've been missed!</p>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <div class="input-group">
+              <input
+                type="email"
+                class="input-field"
+                placeholder="Email"
+                formControlName="email"
+              >
+            </div>
+
+            <div class="input-group">
+              <input
+                type="password"
+                class="input-field"
+                placeholder="Password"
+                formControlName="mot_de_passe"
+              >
+            </div>
+
+            <div class="forgot-password">
+              <a href="#">Forgot your password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn">
+              Se connecter
+            </button>
+
+            <!-- Bouton Azure AD séparé -->
+            <a
+              class="submit-btn azure-btn"
+              href="http://localhost:8080/oauth2/authorization/azure"
+            >
+              <i class="fab fa-microsoft"></i>
+              Connexion avec Azure AD
+            </a>
+          </form>
+
+          <div class="switch-mode">
+            Créer un nouveau compte?
+            <a href="#" (click)="mode = 'register'; $event.preventDefault()">S'inscrire</a>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

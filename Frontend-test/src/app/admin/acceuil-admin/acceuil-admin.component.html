@@ -1,0 +1,55 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>🏛️ Accueil Administrateur</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <div class="welcome">
+        <p>Bienvenue sur le tableau de bord global.</p>
+      </div>
+
+      <!-- Statistiques principales -->
+      <div class="stats-grid">
+        <mat-card class="stat-card" appearance="outlined">
+          <mat-card-title>{{ totalProjets }}</mat-card-title>
+          <mat-card-subtitle>Projets totaux</mat-card-subtitle>
+        </mat-card>
+
+        <mat-card class="stat-card" appearance="outlined">
+          <mat-card-title>{{ totalEncadrants }}</mat-card-title>
+          <mat-card-subtitle>Encadrants</mat-card-subtitle>
+        </mat-card>
+
+        <mat-card class="stat-card" appearance="outlined">
+          <mat-card-title>{{ totalStagiaires }}</mat-card-title>
+          <mat-card-subtitle>Stagiaires</mat-card-subtitle>
+        </mat-card>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Derniers projets -->
+      <div class="latest-projects">
+        <h3>📂 Derniers projets créés</h3>
+        <div class="projects-grid">
+          <mat-card *ngFor="let p of derniersProjets" class="project-card" appearance="outlined">
+            <mat-card-header>
+              <mat-card-title>{{ p.titre }}</mat-card-title>
+              <mat-card-subtitle>
+                Créé le {{ p.createdAt | date:'shortDate' }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p>{{ p.description || 'Pas de description' }}</p>
+              <p><strong>👨‍🏫 Encadrant :</strong> {{ p.encadrant?.firstName }} {{ p.encadrant?.lastName }}</p>
+              <p><strong>👥 Stagiaires :</strong> {{ p.stagiaires?.length || 0 }}</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

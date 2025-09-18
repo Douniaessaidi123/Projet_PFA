@@ -1,0 +1,63 @@
+services:
+  mysql-db:
+    image: mysql:8
+    container_name: db-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestion_stagiaires
+      MYSQL_USER: dounia4
+      MYSQL_PASSWORD: dounia4
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "dounia4", "-pdounia4"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ../auth-service
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  communication-service-app:
+    build:
+      context: ../communication-service
+    container_name: communication-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  project-service-app:
+    build:
+      context: ../project-service
+    container_name: project-app
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  frontend:
+    image: frontend-image    # Utilise l'image que tu as construite avec 'docker build -t frontend-image .'
+    container_name: frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - auth-service
+      - project-service-app
+      - communication-service-app
+
+volumes:
+  db_data:
+
+

@@ -1,0 +1,15 @@
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+.project-card {
+  margin-top: 16px;
+  padding: 12px;
+}
+
+.error {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}

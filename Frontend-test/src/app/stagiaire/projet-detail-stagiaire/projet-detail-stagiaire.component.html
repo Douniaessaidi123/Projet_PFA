@@ -1,0 +1,101 @@
+<div class="container" *ngIf="!loading; else loadingTpl">
+  <ng-container *ngIf="!error; else errorTpl">
+
+    <!-- Informations projet -->
+    <mat-card class="mb">
+      <mat-card-header>
+        <mat-card-title>{{ projet?.titre }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-icon class="icon-sub">supervisor_account</mat-icon>
+          Encadrant : {{ encadrantLabel() }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <p class="desc">{{ projet?.description }}</p>
+
+        <div class="meta">
+          <div><mat-icon class="icon-meta">event</mat-icon>
+            <strong>Début :</strong> {{ projet?.dateDebut }}
+          </div>
+          <div><mat-icon class="icon-meta">event_busy</mat-icon>
+            <strong>Fin :</strong> {{ projet?.dateFin }}
+          </div>
+          <div *ngIf="hasFile()" class="file-row">
+            <mat-icon class="icon-meta">attach_file</mat-icon>
+            <strong>Cahier des charges :</strong>
+            <a [href]="fileUrl()" target="_blank">Télécharger</a>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Liste des tâches -->
+    <mat-card class="mt-3">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="mr-2">assignment</mat-icon>
+          Tâches
+        </mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+
+      <div *ngIf="taches.length > 0; else noTasks">
+        <div class="tasks-grid">
+          <mat-card *ngFor="let t of taches" class="task-card" appearance="outlined">
+            <mat-card-header>
+              <mat-icon [ngClass]="taskClass(t)" class="task-icon">
+                {{ taskIcon(t) }}
+              </mat-icon>
+              <mat-card-title>{{ taskTitle(t) }}</mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p class="task-desc">{{ taskDesc(t) }}</p>
+              <p class="task-meta">📅 <strong>Échéance :</strong> {{ taskDueDate(t) || 'Non définie' }}</p>
+              <p class="task-meta" *ngIf="taskAssignee(t)">👤 <strong>Assigné à :</strong> {{ taskAssignee(t) }}</p>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <ng-container *ngIf="peutModifier(t); else readonlyEtat">
+                <mat-form-field appearance="outline" class="etat-select">
+                  <mat-label>État</mat-label>
+                  <mat-select [value]="t.etat" (selectionChange)="changerEtat(t, $event.value)">
+                    <mat-option value="EN_COURS">En cours</mat-option>
+                    <mat-option value="TERMINE">Terminé</mat-option>
+                    <mat-option value="BLOQUE">Bloqué</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </ng-container>
+
+              <!-- Affichage lecture seule -->
+              <ng-template #readonlyEtat>
+                <p class="task-meta">
+                  📌 <strong>État :</strong> {{ t.etat }}
+                </p>
+              </ng-template>
+            </mat-card-actions>
+
+
+          </mat-card>
+        </div>
+      </div>
+
+      <ng-template #noTasks>
+        <p>Aucune tâche disponible.</p>
+      </ng-template>
+    </mat-card>
+
+  </ng-container>
+</div>
+
+<!-- Loading -->
+<ng-template #loadingTpl>
+  <div class="center"><mat-spinner></mat-spinner></div>
+</ng-template>
+
+<!-- Erreur -->
+<ng-template #errorTpl>
+  <p class="state error">{{ error }}</p>
+</ng-template>

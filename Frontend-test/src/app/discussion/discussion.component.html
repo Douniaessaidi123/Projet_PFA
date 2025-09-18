@@ -1,0 +1,216 @@
+<div class="chat-container" style="display: flex; height: calc(100vh - 64px);">
+  <!-- Sidebar -->
+  <div
+    class="sidebar"
+    style="width: 350px; border-right: 1px solid #ccc; padding: 16px; box-sizing: border-box; overflow-y: auto;"
+  >
+    <!-- Barre de recherche -->
+    <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px; border-radius: 18px;">
+      <mat-label>Search...</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="searchTerm"
+        aria-label="Search contacts"
+        autocomplete="off"
+      />
+      <button mat-icon-button matSuffix aria-label="Search">
+        <mat-icon color="primary">search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- Liste contacts -->
+    <div class="contact-list">
+      <!-- Contacts -->
+      <ng-container *ngFor="let contact of filteredContacts">
+        <div
+          (click)="openPrivateChat(contact)"
+          [class.active]="contact === activeContact"
+          style="cursor: pointer; display: flex; align-items: center; padding: 8px; border-radius: 6px; margin-bottom: 8px;"
+          role="button"
+          tabindex="0"
+          (keyup.enter)="openPrivateChat(contact)"
+          [attr.aria-label]="'Select contact ' + (contact.firstName + ' ' + contact.lastName)"
+        >
+          <img
+            [src]="getAvatarUrl(contact.email)"
+            alt="Avatar of {{ contact.firstName }} {{ contact.lastName }}"
+            style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 12px;"
+          />
+          <div style="flex-grow: 1;">
+            <div style="font-weight: 600; color: #3f51b5;">
+              {{ contact.firstName }} {{ contact.lastName }}
+            </div>
+            <div style="font-size: 12px; color: gray;">{{ contact.email }}</div>
+          </div>
+
+          <!-- Indicateur en ligne -->
+          <div
+            *ngIf="connectedUsersEmails.has(contact.email.toLowerCase())"
+            title="En ligne"
+            style="width: 12px; height: 12px; background-color: #4caf50; border-radius: 50%; margin-left: 8px;"
+            aria-label="En ligne"
+          ></div>
+        </div>
+      </ng-container>
+
+      <!-- Équipes (même style que les contacts) -->
+      <ng-container *ngFor="let team of teams">
+        <div
+          (click)="openGroupChat(team)"
+          style="cursor: pointer; display: flex; align-items: center; padding: 8px; border-radius: 6px; margin-bottom: 8px;">
+          <img [src]="getAvatarUrl(team.encadrant.email)" alt="Avatar of {{ team.encadrant.firstName }} {{ team.encadrant.lastName }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 12px;" />
+          <div style="flex-grow: 1;">
+            <div style="font-weight: 600; color: #3f51b5;">
+              {{ team.encadrant.firstName }} {{ team.encadrant.lastName }} +{{ team.stagiaires.length }}...
+            </div>
+            <div style="font-size: 12px; color: gray;">Projet: {{ team.projetTitre }}</div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-window" style="flex: 1; display: flex; flex-direction: column;">
+    <!-- Header Chat Général (discussion publique) -->
+    <ng-container *ngIf="!activeContact && !activeGroup">
+      <div
+        class="chat-header-global"
+        style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid #ccc;"
+      >
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <mat-icon color="primary">chat</mat-icon>
+          <span style="font-weight: 700; font-size: 16px;">Chat Général</span>
+        </div>
+
+        <!-- Menu à 3 points -->
+        <div style="position: relative;">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon color="primary">more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openCreateChanelDialog()">
+              <mat-icon color="primary">group_add</mat-icon>
+              <span class="mat-primary">Créer une équipe</span>
+            </button>
+          </mat-menu>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Chat Header (discussion privée) -->
+    <ng-container  *ngIf="activeContact && !activeGroup">
+      <div
+        class="chat-header"
+        style="display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ccc;"
+      >
+        <img
+          [src]="getAvatarUrl(activeContact.email)"
+          alt="Avatar of {{ activeContact.firstName }} {{ activeContact.lastName }}"
+          style="width: 48px; height: 48px; border-radius: 50%; margin-right: 16px;"
+        />
+        <div style="flex-grow: 1;">
+          <div style="font-weight: 700; font-size: 18px;">
+            Chat with {{ activeContact.firstName }} {{ activeContact.lastName }}
+          </div>
+          <div style="font-size: 13px; color: gray;">
+            {{ messages.length }} message{{ messages.length > 1 ? 's' : '' }}
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button mat-icon-button aria-label="Call"><mat-icon>call</mat-icon></button>
+          <button mat-icon-button aria-label="Video Call"><mat-icon>videocam</mat-icon></button>
+          <button mat-icon-button aria-label="More Options"><mat-icon>more_vert</mat-icon></button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- Chat de groupe -->
+    <ng-container *ngIf="activeGroup">
+      <div class="chat-header" style="display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ccc;">
+        <img [src]="getAvatarUrl(activeGroup.encadrant.email)" alt="Avatar of {{ activeGroup.encadrant.firstName }} {{ activeGroup.encadrant.lastName }}" style="width: 48px; height: 48px; border-radius: 50%; margin-right: 16px;" />
+        <div style="flex-grow: 1;">
+          <div style="font-weight: 700; font-size: 18px;">Chat de groupe – {{ activeGroup.projetTitre }}</div>
+          <div style="font-size: 13px; color: gray;">Encadrant : {{ activeGroup.encadrant.firstName }} {{ activeGroup.encadrant.lastName }}</div>
+          <div style="font-size: 13px; color: gray;">
+            Stagiaires ({{ activeGroup.stagiaires.length }}):
+            <span *ngFor="let stagiaire of activeGroup.stagiaires; let i = index">
+              {{ stagiaire.firstName }}{{ i < activeGroup.stagiaires.length - 1 ? ', ' : '' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Chat Messages -->
+    <div
+      class="chat-messages"
+      style="flex-grow: 1; overflow-y: auto; padding: 16px;"
+      aria-live="polite"
+      #chatMessagesContainer
+    >
+      <ng-container *ngFor="let msg of messages">
+        <!-- Messages classiques ou privés -->
+        <div
+          *ngIf="msg.type === 'CHAT' || msg.type === 'PRIVATE_CHAT' || msg.type === 'GROUP_CHAT'"
+          style="display: flex; margin-bottom: 12px;"
+          [style.justifyContent]="msg.sender.email === currentUser?.email ? 'flex-end' : 'flex-start'"
+        >
+          <img
+            *ngIf="msg.sender.email !== currentUser?.email"
+            [src]="getAvatarUrl(msg.sender.email)"
+            alt="Avatar of {{ msg.sender.firstName }} {{ msg.sender.lastName }}"
+            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; margin: 0 8px;"
+          />
+          <div
+            [style.backgroundColor]="msg.sender.email === currentUser?.email ? '#511c8c' : '#2d198e'"
+            [style.color]="'white'"
+            style="padding: 10px 14px; border-radius: 16px; max-width: 60%; word-wrap: break-word;"
+          >
+            {{ msg.content }}
+            <div style="font-size: 10px; margin-top: 4px; text-align: right;">
+              {{ msg.timestamp | date : 'shortTime' }}
+            </div>
+          </div>
+          <img
+            *ngIf="msg.sender.email === currentUser?.email"
+            [src]="getAvatarUrl(msg.sender.email)"
+            alt="Avatar of {{ msg.sender.firstName }} {{ msg.sender.lastName }}"
+            style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; margin: 0 8px;"
+          />
+        </div>
+
+        <!-- Messages système -->
+        <div
+          *ngIf="msg.type === 'JOIN' || msg.type === 'LEAVE'"
+          style="text-align: center; color: gray; font-style: italic; margin: 12px 0; user-select: none;"
+          aria-live="assertive"
+        >
+          {{ msg.content }}
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Chat Input -->
+    <div
+      class="chat-input"
+      style="display: flex; padding: 12px 16px; border-top: 1px solid #ccc; align-items: center;"
+    >
+      <mat-form-field appearance="outline" style="flex-grow: 1; margin-right: 8px;">
+        <mat-label>Type your message...</mat-label>
+        <input
+          matInput
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          aria-label="Type your message"
+          autocomplete="off"
+        />
+      </mat-form-field>
+      <button mat-fab color="primary" (click)="sendMessage()" aria-label="Send message">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+  </div> <!-- fin de chat-window -->
+</div> <!-- fin de chat-container -->
+
+

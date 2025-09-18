@@ -1,0 +1,51 @@
+<div class="container" *ngIf="!loading; else loadingTpl">
+  <ng-container *ngIf="!error; else errorTpl">
+
+    <!-- Résumé projet -->
+    <mat-card class="project-summary">
+      <mat-card-header>
+        <mat-card-title>🎓 Mon Projet</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Titre :</strong> {{ projet?.titre }}</p>
+        <p><strong>Encadrant :</strong> {{ projet?.encadrantNomComplet }}</p>
+        <p><strong>Début :</strong> {{ projet?.dateDebut }}</p>
+        <p><strong>Fin :</strong> {{ projet?.dateFin }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Stats -->
+    <div class="stats-overview">
+      <mat-card class="stat-card">
+        <h2>Total tâches</h2>
+        <p>{{ totalTasks }}</p>
+      </mat-card>
+      <mat-card class="stat-card">
+        <h2>Progression</h2>
+        <p>{{ completion | number:'1.0-0' }}%</p>
+      </mat-card>
+      <mat-card class="stat-card">
+        <h2>Prochaine échéance</h2>
+        <p>{{ prochaineDeadline || 'Aucune' }}</p>
+      </mat-card>
+    </div>
+
+    <!-- Graphique -->
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>📊 Répartition de mes tâches</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-wrapper">
+          <canvas #tachesChart></canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl><mat-spinner></mat-spinner></ng-template>
+<ng-template #errorTpl><p>{{ error }}</p></ng-template>
