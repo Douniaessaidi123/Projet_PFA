@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 
 auth-service/src/main/resources/application.yml
 
+=======
+>>>>>>> 935ee9f (Initial commit on clean-branch, ignore application.yml)
 # Dependencies
 node_modules/
 **/node_modules/
