@@ -1,0 +1,77 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        Bienvenue, Encadrant 👨‍🏫
+      </mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <div class="welcome">
+        <p>Voici un aperçu de vos projets et stagiaires.</p>
+      </div>
+
+      <!-- Statistiques principales -->
+      <div class="stats-grid">
+        <mat-card class="stat-card" appearance="outlined">
+          <mat-card-title>{{ projetsCount }}</mat-card-title>
+          <mat-card-subtitle>Projets encadrés</mat-card-subtitle>
+        </mat-card>
+
+        <mat-card class="stat-card" appearance="outlined">
+          <mat-card-title>{{ stagiairesCount }}</mat-card-title>
+          <mat-card-subtitle>Stagiaires suivis</mat-card-subtitle>
+        </mat-card>
+
+        <mat-card class="stat-card" appearance="outlined">
+          <mat-card-title>{{ projetsEnCours }}</mat-card-title>
+          <mat-card-subtitle>Projets en cours</mat-card-subtitle>
+        </mat-card>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Derniers projets -->
+      <div class="latest-projects">
+        <h3>📂 Derniers projets créés</h3>
+        <div class="projects-grid">
+          <mat-card *ngFor="let p of derniersProjets" class="project-card" appearance="outlined">
+            <mat-card-header>
+              <mat-card-title>{{ p.titre }}</mat-card-title>
+              <mat-card-subtitle>
+                Créé le {{ p.createdAt | date:'shortDate' }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <p>{{ p.description || 'Pas de description' }}</p>
+              <p><strong>📅 Début :</strong> {{ p.dateDebut | date }}
+                <strong>— Fin :</strong> {{ p.dateFin | date }}</p>
+              <p><strong>👥 Stagiaires :</strong> {{ p.stagiaires?.length || 0 }}</p>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-stroked-button color="primary" [routerLink]="['/encadrant/projets', p.id]">
+                🔍 Voir détails
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+
+
+      <mat-divider></mat-divider>
+
+      <!-- Boutons rapides -->
+      <div class="quick-actions">
+        <button mat-raised-button color="primary" routerLink="/encadrant/addProject">
+          ➕ Créer un projet
+        </button>
+        <button mat-stroked-button color="accent" routerLink="/encadrant/projets">
+          📂 Voir tous mes projets
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

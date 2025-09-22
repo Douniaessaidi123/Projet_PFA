@@ -1,0 +1,48 @@
+<div class="container" *ngIf="!loading; else loadingTpl">
+  <ng-container *ngIf="!error && projet; else errorTpl">
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>👨‍🎓 Accueil Stagiaire</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <p>Bienvenue dans votre espace stagiaire. Voici les informations de votre projet :</p>
+
+        <mat-card class="project-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ projet.titre }}</mat-card-title>
+            <mat-card-subtitle>
+              <p><strong> Encadrant :</strong> {{ projet.encadrantNomComplet }}</p>
+
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p>{{ projet.description || 'Pas de description' }}</p>
+            <p><strong>📅 Début :</strong> {{ projet.dateDebut | date }}
+              <strong>— Fin :</strong> {{ projet.dateFin | date }}</p>
+            <p><strong>📌 État :</strong> {{ getEtatProjet(projet) }}</p>
+            <p><strong>📝 Tâches :</strong> {{ projet.taches?.length || 0 }}</p>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-raised-button color="primary" [routerLink]="['/stagiaire/projets', projet.id]">
+              🔍 Voir détails du projet
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-card-content>
+    </mat-card>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <mat-spinner></mat-spinner>
+</ng-template>
+
+<ng-template #errorTpl>
+  <p class="error">{{ error }}</p>
+</ng-template>

@@ -1,0 +1,72 @@
+<div class="container" *ngIf="!loading; else loadingTpl">
+  <ng-container *ngIf="!error; else errorTpl">
+
+    <!-- Filtrage par encadrant -->
+    <mat-form-field appearance="outline" style="width: 300px; margin-bottom: 20px;">
+      <mat-label>Choisir un encadrant</mat-label>
+      <mat-select (selectionChange)="onEncadrantChange($event.value)">
+        <mat-option *ngFor="let e of encadrants" [value]="e.id">
+          {{ e.firstName }} {{ e.lastName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Résumé global (basé sur l’encadrant choisi) -->
+    <div class="stats-overview" *ngIf="selectedEncadrantId">
+      <mat-card class="stat-card">
+        <h2>Total projets</h2>
+        <p>{{ objectKeys(stats).length }}</p>
+      </mat-card>
+      <mat-card class="stat-card">
+        <h2>Total tâches</h2>
+        <p>{{ totalTasks }}</p>
+      </mat-card>
+      <mat-card class="stat-card">
+        <h2>% moyen terminé</h2>
+        <p>{{ avgCompletion | number:'1.0-0' }}%</p>
+      </mat-card>
+    </div>
+
+    <!-- Liste des projets -->
+    <mat-card *ngIf="selectedEncadrantId">
+      <mat-card-header>
+        <mat-card-title>📊 Tableau de bord - Encadrant sélectionné</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+
+      <mat-card-content>
+        <div class="projects-grid">
+          <div *ngFor="let project of objectKeys(stats)" class="project-stat-card">
+            <h3 class="project-title">{{ project }}</h3>
+
+            <!-- Cercle progression -->
+            <div class="progress-circle">
+              <mat-progress-spinner
+                [value]="(stats[project].termine / stats[project].total) * 100"
+                mode="determinate"
+                strokeWidth="8"
+                diameter="80"
+                color="primary">
+              </mat-progress-spinner>
+              <span class="progress-label">
+                {{ ((stats[project].termine / stats[project].total) * 100) | number:'1.0-0' }}%
+              </span>
+            </div>
+
+            <!-- Donut Chart -->
+            <canvas id="chart-{{ project }}"></canvas>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </ng-container>
+</div>
+
+<ng-template #loadingTpl>
+  <mat-spinner></mat-spinner>
+</ng-template>
+
+<ng-template #errorTpl>
+  <p>{{ error }}</p>
+</ng-template>

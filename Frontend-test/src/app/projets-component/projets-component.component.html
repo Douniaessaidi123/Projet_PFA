@@ -1,0 +1,54 @@
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>📂 Liste des Projets</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <!-- Filtre par année -->
+      <div class="filtre-annee">
+        <mat-form-field appearance="outline">
+          <mat-label>Filtrer par année</mat-label>
+          <mat-select [(ngModel)]="anneeFiltre" (selectionChange)="filtrerProjets()">
+            <mat-option [value]="null">Toutes les années</mat-option>
+            <mat-option *ngFor="let annee of anneesDisponibles" [value]="annee">
+              {{ annee }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Liste des projets -->
+      <div *ngIf="projets.length > 0" class="projects-grid">
+        <mat-card *ngFor="let p of projets" class="project-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ p.titre }}</mat-card-title>
+            <mat-card-subtitle>
+              Créé le {{ p.createdAt | date:'shortDate' }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p>{{ p.description || 'Pas de description' }}</p>
+            <p><strong>📅 Début :</strong> {{ p.dateDebut | date }}
+              <strong>— Fin :</strong> {{ p.dateFin | date }}</p>
+            <p><strong>👥 Stagiaires :</strong> {{ p.stagiaires?.length || 0 }}</p>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-stroked-button color="primary"
+                    [routerLink]="['/encadrant/projets', p.id]">
+              🔍 Voir détails
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Aucun projet -->
+      <div *ngIf="projets.length === 0" class="no-projects">
+        Aucun projet trouvé.
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

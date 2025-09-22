@@ -1,0 +1,97 @@
+version: '3.9'
+
+networks:
+  bsn-network:
+    driver: bridge
+
+volumes:
+  docker_db_data:   # <-- volume MySQL existant
+    external: true
+  auth-storage:
+    driver: local
+  communication-storage:
+    driver: local
+  project-storage:
+    driver: local
+  frontend-storage:
+    driver: local
+
+services:
+  # --------------------------
+  # Base de données MySQL
+  # --------------------------
+  mysql-db:
+    container_name: mysql-bsn
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestion_stagiaires
+      MYSQL_USER: dounia4
+      MYSQL_PASSWORD: dounia4
+    ports:
+      - "3307:3306"
+    volumes:
+      - docker_db_data:/var/lib/mysql  # <-- utilise le volume existant
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "dounia4", "-pdounia4"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    networks:
+      - bsn-network
+    restart: unless-stopped
+
+  # --------------------------
+  # Services backend
+  # --------------------------
+  auth-service:
+    container_name: auth-service-bsn
+    image: api/auth-service:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - bsn-network
+    restart: unless-stopped
+
+  communication-service:
+    container_name: communication-service-bsn
+    image: api/communication-service:0.0.1-SNAPSHOT
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - bsn-network
+    restart: unless-stopped
+
+  project-service:
+    container_name: project-service-bsn
+    image: api/project-service:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - bsn-network
+    restart: unless-stopped
+
+  # --------------------------
+  # Frontend Angular
+  # --------------------------
+  frontend:
+    container_name: frontend-bsn
+    image: frontend:0.0.1
+    ports:
+      - "4200:80"
+    depends_on:
+      - auth-service
+      - project-service
+      - communication-service
+    networks:
+      - bsn-network
+    restart: unless-stopped

@@ -1,0 +1,59 @@
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.desc {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 12px;
+}
+
+.task-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.task-title {
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-meta {
+  font-size: 13px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.etat-badge {
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.etat-a_faire {
+  background: #eeeeee;
+  color: #424242;
+}
+
+.etat-en_cours {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.etat-termine {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.etat-bloque {
+  background: #fff3e0;
+  color: #ef6c00;
+}

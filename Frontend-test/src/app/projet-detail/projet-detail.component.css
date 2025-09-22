@@ -1,0 +1,23 @@
+.spacer {
+  flex: 1 1 auto;
+}
+.full-width {
+  width: 100%;
+}
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+.etat-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.etat-a-faire  { background: #eeeeee; color: #424242; }   /* gris */
+.etat-en-cours { background: #e3f2fd; color: #1565c0; }   /* bleu clair */
+.etat-termine  { background: #e8f5e9; color: #2e7d32; }   /* vert clair */
+.etat-bloque   { background: #ffebee; color: #c62828; }   /* rouge clair */

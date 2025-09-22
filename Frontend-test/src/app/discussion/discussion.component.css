@@ -1,0 +1,148 @@
+.chat-container {
+  display: flex;
+  height: calc(100vh - 64px); /* toolbar height */
+  padding: 16px;
+}
+
+.sidebar {
+  width: 30%;
+  background: #fff;
+  color: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;        /* Firefox */
+  scrollbar-color: #1976d2 #e0e0e0;
+}
+
+.search-bar {
+  width: 100%;
+}
+
+.contact-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 16px;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 10px;
+   /* fond blanc */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  color: black; /* texte noir */
+}
+.contact:hover {
+  background-color: #455a64;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.info .name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.info .status {
+  font-size: 12px;
+  color: #90caf9;
+}
+
+.chat-window {
+  flex: 1;
+  margin-left: 16px;
+  background: #fff;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.chat-header .chat-info {
+  margin-left: 12px;
+  flex: 1;
+}
+
+.chat-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chat-subtitle {
+  font-size: 12px;
+  color: #cfd8dc;
+}
+
+.chat-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+}
+
+.message {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.message.me {
+  justify-content: flex-end;
+  text-align: right;
+
+}
+
+.message.you {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 60%;
+  padding: 12px;
+  border-radius: 20px;
+  background-color: 205C16;
+  color: white;
+  position: relative;
+}
+
+.message.you .bubble {
+  background-color: 8BDF7C;
+}
+
+.timestamp {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 6px;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  padding-top: 12px;
+  gap: 12px;
+}

@@ -1,0 +1,50 @@
+<!-- src/app/projets-stagiaire/projets-stagiaire.component.html -->
+<div class="container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Mes Projets</mat-card-title>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+
+      <div *ngIf="loading" class="state">Chargement…</div>
+      <div *ngIf="error" class="state error">{{ error }}</div>
+
+      <!-- Liste -->
+      <div *ngIf="!loading && !error && projets.length > 0" class="projets-grid">
+        <mat-card *ngFor="let projet of projets" class="projet-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ projet.titre }}</mat-card-title>
+            <mat-card-subtitle>{{ encadrantLabel(projet) }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p>{{ projet.description }}</p>
+            <p><strong>Début :</strong> {{ projet.dateDebut }}</p>
+            <p><strong>Fin :</strong> {{ projet.dateFin }}</p>
+
+            <div *ngIf="projet.file" class="file-row">
+              <button mat-stroked-button (click)="downloadCahier(projet)">
+                Télécharger le cahier des charges
+              </button>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-raised-button color="primary" [routerLink]="['/stagiaire/projets', projet.id]">
+              Voir les détails
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Vide -->
+      <div *ngIf="!loading && !error && projets.length === 0" class="state empty">
+        Aucun projet ne vous a encore été affecté.
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

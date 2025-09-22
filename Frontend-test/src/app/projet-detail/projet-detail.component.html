@@ -1,0 +1,245 @@
+<mat-toolbar color="primary">
+  <span class="logo">Projet : {{ projet?.titre }}</span>
+</mat-toolbar>
+
+<div class="container mt-4" style="max-width: 900px; margin: auto;">
+  <mat-tab-group [(selectedIndex)]="tabIndex">
+
+    <!-- Détails -->
+    <mat-tab label="Détails">
+      <mat-card>
+        <mat-card-title>Détails du Projet</mat-card-title>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+          <p><strong>Description :</strong> {{ projet?.description }}</p>
+          <p><strong>Date de début :</strong> {{ projet?.dateDebut }}</p>
+          <p><strong>Date de fin :</strong> {{ projet?.dateFin }}</p>
+          <div *ngIf="projet?.file">
+            <p><strong>Cahier des charges :</strong>
+              <a [attr.href]="'http://localhost:8082/api/projets/uploads/' + encode(projet.file)" target="_blank">
+                Télécharger le fichier
+              </a>
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Stagiaires -->
+    <mat-tab label="Stagiaires">
+      <mat-card>
+        <mat-card-title>Stagiaires Affectés</mat-card-title>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+          <mat-list *ngIf="projet?.stagiaires?.length > 0; else noStagiaires">
+            <mat-list-item *ngFor="let stagiaire of projet.stagiaires">
+              {{ stagiaire.lastName }} {{ stagiaire.firstName }} ({{ stagiaire.email }})
+
+              <button mat-icon-button color="warn"
+                      (click)="supprimerStagiaire(stagiaire.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+
+          <ng-template #noStagiaires>
+            <p>Aucun stagiaire affecté.</p>
+          </ng-template>
+
+          <form [formGroup]="stagiaireForm" (ngSubmit)="affecterStagiaire()" class="mt-3">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email du stagiaire</mat-label>
+              <input matInput type="email" formControlName="email"
+                     placeholder="ex: prenom.nom@exemple.com" autocomplete="email" />
+              <mat-error *ngIf="stagiaireForm.get('email')?.hasError('required')">
+                L'email est obligatoire.
+              </mat-error>
+              <mat-error *ngIf="stagiaireForm.get('email')?.hasError('email')">
+                Format d'email invalide.
+              </mat-error>
+            </mat-form-field>
+
+            <button mat-raised-button color="accent" type="submit" [disabled]="stagiaireForm.invalid">
+              Ajouter le stagiaire
+            </button>
+          </form>
+
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Tâches -->
+    <mat-tab label="Tâches">
+      <mat-card>
+        <mat-card-title>Tâches du Projet</mat-card-title>
+        <mat-divider></mat-divider>
+        <mat-card-content>
+
+          <!-- Formulaire d’ajout -->
+          <form [formGroup]="tacheForm" (ngSubmit)="ajouterTache()" class="mt-3">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Titre</mat-label>
+              <input matInput formControlName="titre">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Deadline</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="deadline">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-error *ngIf="tacheForm.get('deadline')?.hasError('minDate')">
+                La deadline ne peut pas être dans le passé.
+              </mat-error>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>État</mat-label>
+              <mat-select formControlName="etat">
+                <mat-option value="A_FAIRE">À faire</mat-option>
+                <mat-option value="EN_COURS">En cours</mat-option>
+                <mat-option value="TERMINE">Terminée</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Stagiaire (e-mail)</mat-label>
+              <mat-select formControlName="stagiaireEmail">
+                <mat-option [value]="null">Aucun</mat-option>
+                <mat-option *ngFor="let s of projet?.stagiaires" [value]="s.email">
+                  {{ s.email }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="tacheForm.invalid">
+              Ajouter la tâche
+            </button>
+          </form>
+
+          <!-- Liste + édition inline -->
+          <mat-accordion *ngIf="taches.length > 0; else noTaches" class="mt-4">
+            <mat-expansion-panel *ngFor="let t of taches">
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ t.titre }}</mat-panel-title>
+                <mat-panel-description>
+                  <span class="etat-badge" [ngClass]="etatClass(t.etat)">{{ labelEtat(t.etat) }}</span>
+                  &nbsp;—&nbsp; {{ t.deadline | date:'yyyy-MM-dd' }}
+                </mat-panel-description>
+
+              </mat-expansion-panel-header>
+
+              <div class="mb-2" *ngIf="t.stagiaireEmail">Assignée à : {{ t.stagiaireEmail }}</div>
+
+              <form *ngIf="editForms[t.id]" [formGroup]="editForms[t.id]" (ngSubmit)="saveTache(t)" class="mt-3">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>État</mat-label>
+                  <mat-select formControlName="etat">
+                    <mat-option value="A_FAIRE">À faire</mat-option>
+                    <mat-option value="EN_COURS">En cours</mat-option>
+                    <mat-option value="TERMINE">Terminée</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Deadline</mat-label>
+                  <input matInput [matDatepicker]="dp" formControlName="deadline">
+                  <mat-error *ngIf="editForms[t.id]?.get('deadline')?.hasError('minDate')">
+                    La deadline ne peut pas être dans le passé.
+                  </mat-error>
+
+                  <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                  <mat-datepicker #dp></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Stagiaire (e-mail)</mat-label>
+                  <mat-select formControlName="stagiaireEmail">
+                    <mat-option [value]="null">Aucun</mat-option>
+                    <mat-option *ngFor="let s of projet?.stagiaires" [value]="s.email">
+                      {{ s.email }}
+                      <!-- ou: {{ s.firstName }} {{ s.lastName }} ({{ s.email }}) -->
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+
+                <div class="mt-2" style="display:flex; gap:8px; align-items:center;">
+                  <button mat-raised-button color="primary" type="submit"
+                          [disabled]="editForms[t.id].invalid || editForms[t.id].pristine">
+                          Enregistrer
+                  </button>
+                  <button mat-stroked-button type="button" (click)="resetTacheForm(t)">Annuler</button>
+
+                  <span style="flex:1 1 auto;"></span>
+
+                  <button mat-stroked-button color="warn" type="button" (click)="supprimerTache(t.id)">
+                    Supprimer
+                  </button>
+                </div>
+              </form>
+            </mat-expansion-panel>
+          </mat-accordion>
+
+          <ng-template #noTaches>
+            <p>Aucune tâche encore définie.</p>
+          </ng-template>
+
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Onglet Édition -->
+    <mat-tab label="Édition">
+      <mat-card>
+        <mat-card-title>Modifier le projet</mat-card-title>
+        <mat-divider></mat-divider>
+
+        <form [formGroup]="projetForm" (ngSubmit)="updateProjet()" enctype="multipart/form-data" class="mt-3">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Titre</mat-label>
+            <input matInput formControlName="titre">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Date de début</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="dateDebut">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Date de fin</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="dateFin">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+
+          <!-- Upload cahier des charges -->
+          <div class="mt-3">
+            <label for="fileUpload">Cahier des charges :</label>
+            <input type="file" id="fileUpload" (change)="onFileSelected($event)" />
+            <p *ngIf="projet?.file">
+              Fichier actuel :
+              <a [href]="'http://localhost:8082/api/projets/uploads/' + encode(projet.file)" target="_blank">
+                {{ projet.file }}
+              </a>
+            </p>
+          </div>
+
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="projetForm.pristine && !selectedFile">
+            Enregistrer les modifications
+          </button>
+
+        </form>
+      </mat-card>
+    </mat-tab>
+
+
+  </mat-tab-group>
+</div>

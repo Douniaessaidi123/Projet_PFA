@@ -1,0 +1,52 @@
+ <mat-card>
+    <mat-card-header>
+      <mat-card-title>Mon compte</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <div class="wrap">
+        <div class="left">
+          <div class="avatar">
+            <img *ngIf="photoUrl()" [src]="photoUrl()" alt="Avatar" (error)="onImgError($event)">
+
+            <div *ngIf="!photoUrl()" class="avatar-fallback">
+              {{ initial }}
+            </div>
+
+          </div>
+
+          <div class="uploader">
+            <label for="fileUpload">Choisir une photo</label>
+            <input id="fileUpload" type="file" accept="image/*" (change)="onFileSelected($event)">
+
+            <button mat-raised-button="" color="primary" (click)="uploadPhoto()" [disabled]="!selectedFile || uploading">
+              {{ uploading ? 'Téléversement…' : 'Téléverser la photo' }}
+            </button>
+
+            <small>Formats acceptés : JPG, PNG</small>
+          </div>
+        </div>
+        <div class="right">
+          <mat-list>
+            <mat-list-item>
+              <span class="label">Nom&nbsp;:</span>
+              <span class="value">{{ user?.lastName || '—' }}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <span class="label">Prénom&nbsp;:</span>
+              <span class="value">{{ user?.firstName || '—' }}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <span class="label">Email&nbsp;:</span>
+              <span class="value">{{ user?.email || '—' }}</span>
+            </mat-list-item>
+            <mat-list-item>
+              <span class="label">Département&nbsp;:</span>
+              <span class="value">{{ user?.departement || '—' }}</span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>

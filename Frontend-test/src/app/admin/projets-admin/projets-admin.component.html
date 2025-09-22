@@ -1,0 +1,66 @@
+<div class="container">
+
+  <!-- Ligne filtres -->
+  <div class="filter-row">
+    <!-- Sélecteur de rôle -->
+    <mat-form-field>
+      <mat-label>Filtrer par rôle</mat-label>
+      <mat-select (selectionChange)="onRoleChange($event.value)">
+        <mat-option value="ENCADRANT">Encadrants</mat-option>
+        <mat-option value="STAGIAIRE">Stagiaires</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Barre de recherche -->
+    <div *ngIf="role" class="search-container">
+      <mat-form-field appearance="outline" class="search-bar">
+        <mat-label>Rechercher par email</mat-label>
+        <input matInput [(ngModel)]="searchEmail"
+               (keyup.enter)="searchByEmail()"
+               [placeholder]="role === 'STAGIAIRE' ? 'Rechercher un stagiaire par email' : 'Rechercher un encadrant par email'">
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="searchByEmail()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Message si aucun utilisateur -->
+  <p *ngIf="users.length === 0 && searchEmail" class="no-result">
+    Aucun utilisateur trouvé pour cet email.
+  </p>
+
+  <!-- Liste utilisateurs -->
+  <div *ngIf="users.length > 0" class="users-grid">
+    <mat-card *ngFor="let u of users" class="user-card">
+      <mat-card-header>
+        <img mat-card-avatar [src]="u.photo || 'assets/avatar.png'" alt="Photo">
+        <mat-card-title>{{ u.firstName }} {{ u.lastName }}</mat-card-title>
+        <mat-card-subtitle>{{ u.email }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="voirProjets(u)">Voir projets</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Liste projets -->
+  <div *ngIf="projets.length > 0" class="projects-grid">
+    <mat-card *ngFor="let p of projets" class="project-card">
+      <mat-card-header>
+        <mat-card-title>{{ p.titre }}</mat-card-title>
+        <mat-card-subtitle *ngIf="role === 'STAGIAIRE'">
+          Encadrant : {{ p.encadrant?.firstName }} {{ p.encadrant?.lastName }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ p.description }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="accent" [routerLink]="['/admin/projets', p.id]">Voir détails</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

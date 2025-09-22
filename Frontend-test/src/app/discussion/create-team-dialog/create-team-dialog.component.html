@@ -1,0 +1,20 @@
+<!-- create-group-dialog.component.html -->
+<h2 mat-dialog-title>Créer un groupe</h2>
+<mat-dialog-content>
+  <mat-form-field style="width:100%">
+    <mat-label>Nom du groupe</mat-label>
+    <input matInput [(ngModel)]="groupName">
+  </mat-form-field>
+
+  <mat-selection-list [(ngModel)]="selectedMembers">
+    <mat-list-option *ngFor="let user of data.contacts" [value]="user.id">
+      {{ user.firstName }} {{ user.lastName }}
+    </mat-list-option>
+  </mat-selection-list>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Annuler</button>
+  <!-- 🔹 envoyer memberIds et non "members" -->
+  <button mat-button [mat-dialog-close]="{ name: groupName, memberIds: selectedMembers }">Créer</button>
+</mat-dialog-actions>
