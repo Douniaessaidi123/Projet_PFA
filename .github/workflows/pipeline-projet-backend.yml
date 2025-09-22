@@ -1,14 +1,14 @@
-name: stagiafow auth Backend API Pipeline
+name: stagiafow projet Backend API Pipeline
 
 on:
   push:
     branches:
       - ci/pipeline
     paths:
-      - auth-service/**
-      - docker/backend/auth_service/**
+      - project-service/**
+      - docker/backend/projet_service/**
       - 'docker-compose.yml'
-      - .github/workflows/*-auth-backend.yml
+      - .github/workflows/*-projet-backend.yml
 
 jobs:
   compile:
@@ -112,7 +112,7 @@ jobs:
           file: docker/backend/auth_service/Dockerfile
           push: true
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/auth-api:${{ steps.extract_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/auth-api:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/project-api:${{ steps.extract_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/project-api:latest
           build-args: |
             PROFILE=dev
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
