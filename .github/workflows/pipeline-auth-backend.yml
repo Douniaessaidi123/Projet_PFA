@@ -2,7 +2,7 @@ name: stagiafow auth Backend API Pipeline
 on:
   push:
     branches:
-      - main
+      - ci/pipeline
     paths:
       - auth-service/**
       - docker/backend/auth_service/**
