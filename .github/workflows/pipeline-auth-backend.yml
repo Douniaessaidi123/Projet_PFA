@@ -1,4 +1,5 @@
 name: stagiafow auth Backend API Pipeline
+
 on:
   push:
     branches:
@@ -10,26 +11,27 @@ on:
       - .github/workflows/*-auth-backend.yml
 
 jobs:
-compile:
-  runs-on: ubuntu-latest
-  name: Compile project
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+  compile:
+    runs-on: ubuntu-latest
+    name: Compile project
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Make Maven Wrapper executable
-      run: chmod +x ./mvnw
+      - name: Make Maven Wrapper executable
+        run: chmod +x ./mvnw
 
-    - name: Setup JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'corretto'
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
 
-    - name: Running Unit Tests
-      run: ./mvnw clean compile
+      - name: Running Unit Tests
+        run: ./mvnw clean compile
+
   unit-tests:
     runs-on: ubuntu-latest
     name: Unit tests
@@ -46,8 +48,8 @@ compile:
           distribution: 'corretto'
 
       - name: Running Unit Tests
-        run: |
-          ./mvnw clean test
+        run: ./mvnw clean test
+
   build:
     runs-on: ubuntu-latest
     name: Build backend
@@ -65,8 +67,7 @@ compile:
           distribution: 'corretto'
 
       - name: Compile project
-        run: |
-          ./mvnw clean compile
+        run: ./mvnw clean compile
 
   build-image:
     name: Build Docker image
@@ -78,10 +79,12 @@ compile:
         with:
           java-version: '21'
           distribution: 'corretto'
+
       - name: Extract project version
         id: extract_version
         run: |
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -99,5 +102,3 @@ compile:
           build-args: |
             PROFILE=dev
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
-  
-
