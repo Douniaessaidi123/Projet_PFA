@@ -10,24 +10,26 @@ on:
       - .github/workflows/*-auth-backend.yml
 
 jobs:
-  compile:
-    runs-on: ubuntu-latest
-    name: Compile project
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+compile:
+  runs-on: ubuntu-latest
+  name: Compile project
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'corretto'
+    - name: Make Maven Wrapper executable
+      run: chmod +x ./mvnw
 
-      - name: Running Unit Tests
-        run: |
-          ./mvnw clean compile
+    - name: Setup JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'corretto'
+
+    - name: Running Unit Tests
+      run: ./mvnw clean compile
   unit-tests:
     runs-on: ubuntu-latest
     name: Unit tests
